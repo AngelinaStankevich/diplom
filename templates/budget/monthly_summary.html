@@ -1,0 +1,121 @@
+{% extends 'base.html' %}
+{% load crispy_forms_tags %}
+{% load budget_extras %}
+{% block title %}Финансовый отчёт{% endblock %}
+{% block content %}
+<h1>Финансовый отчёт</h1>
+
+<!-- Годовой отчёт -->
+<div class="card mb-4">
+    <div class="card-header">
+        <h3>Годовой отчёт</h3>
+    </div>
+    <div class="card-body">
+        <div class="table-responsive">
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>Год</th>
+                        <th>Доходы</th>
+                        <th>Расходы</th>
+                        <th>Баланс</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for year, data in yearly_summary.items %}
+                    <tr>
+                        <td>{{ year }}</td>
+                        <td class="text-success">{{ data.total_incomes_byn|floatformat:2 }} Br</td>
+                        <td class="text-danger">{{ data.total_expenses_byn|floatformat:2 }} Br</td>
+                        <td class="{% if data.total_incomes_byn > data.total_expenses_byn %}text-success{% else %}text-danger{% endif %}">
+                            {{ data.total_incomes_byn|subtract:data.total_expenses_byn|floatformat:2 }} Br
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<!-- Месячный отчёт -->
+<div class="card">
+    <div class="card-header">
+        <h3>Отчёт по месяцам</h3>
+    </div>
+    <div class="card-body">
+        <div class="table-responsive">
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>Месяц</th>
+                        <th>Доходы</th>
+                        <th>Расходы</th>
+                        <th>Баланс</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for month, data in summary.items %}
+                    <tr>
+                        <td>
+                            {% if month|slice:":4" == "2024" %}
+                                {% if month|slice:"5:7" == "01" %}Январь 2024
+                                {% elif month|slice:"5:7" == "02" %}Февраль 2024
+                                {% elif month|slice:"5:7" == "03" %}Март 2024
+                                {% elif month|slice:"5:7" == "04" %}Апрель 2024
+                                {% elif month|slice:"5:7" == "05" %}Май 2024
+                                {% elif month|slice:"5:7" == "06" %}Июнь 2024
+                                {% elif month|slice:"5:7" == "07" %}Июль 2024
+                                {% elif month|slice:"5:7" == "08" %}Август 2024
+                                {% elif month|slice:"5:7" == "09" %}Сентябрь 2024
+                                {% elif month|slice:"5:7" == "10" %}Октябрь 2024
+                                {% elif month|slice:"5:7" == "11" %}Ноябрь 2024
+                                {% elif month|slice:"5:7" == "12" %}Декабрь 2024
+                                {% endif %}
+                            {% elif month|slice:":4" == "2023" %}
+                                {% if month|slice:"5:7" == "01" %}Январь 2023
+                                {% elif month|slice:"5:7" == "02" %}Февраль 2023
+                                {% elif month|slice:"5:7" == "03" %}Март 2023
+                                {% elif month|slice:"5:7" == "04" %}Апрель 2023
+                                {% elif month|slice:"5:7" == "05" %}Май 2023
+                                {% elif month|slice:"5:7" == "06" %}Июнь 2023
+                                {% elif month|slice:"5:7" == "07" %}Июль 2023
+                                {% elif month|slice:"5:7" == "08" %}Август 2023
+                                {% elif month|slice:"5:7" == "09" %}Сентябрь 2023
+                                {% elif month|slice:"5:7" == "10" %}Октябрь 2023
+                                {% elif month|slice:"5:7" == "11" %}Ноябрь 2023
+                                {% elif month|slice:"5:7" == "12" %}Декабрь 2023
+                                {% endif %}
+                            {% endif %}
+                        </td>
+                        <td>
+                            <div class="text-success">
+                                {% for income in data.incomes %}
+                                    <div>{{ income.total }} {{ income.currency_symbol }}</div>
+                                {% endfor %}
+                                <strong>Всего: {{ data.total_incomes_byn|floatformat:2 }} Br</strong>
+                            </div>
+                        </td>
+                        <td>
+                            <div class="text-danger">
+                                {% for expense in data.expenses %}
+                                    <div>{{ expense.total }} {{ expense.currency_symbol }}</div>
+                                {% endfor %}
+                                <strong>Всего: {{ data.total_expenses_byn|floatformat:2 }} Br</strong>
+                            </div>
+                        </td>
+                        <td class="{% if data.total_incomes_byn > data.total_expenses_byn %}text-success{% else %}text-danger{% endif %}">
+                            <strong>{{ data.total_incomes_byn|subtract:data.total_expenses_byn|floatformat:2 }} Br</strong>
+                        </td>
+                    </tr>
+                    {% empty %}
+                    <tr>
+                        <td colspan="4" class="text-center">Нет данных</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% endblock %}

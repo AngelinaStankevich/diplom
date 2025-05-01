@@ -1,0 +1,19 @@
+[tool.poetry]
+name = "finance-manager"
+version = "0.1.0"
+description = ""
+authors = ["Angelina <angst2003@gmail.com>"]
+readme = "README.md"
+packages = [{include = "finance_manager"}]
+
+[tool.poetry.dependencies]
+python = "^3.10"
+django = "^5.2"
+psycopg2-binary = "^2.9.10"
+django-crispy-forms = "^2.4"
+crispy-bootstrap5 = "^2025.4"
+
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"

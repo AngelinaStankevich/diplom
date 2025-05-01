@@ -1,0 +1,90 @@
+{% extends 'base.html' %}
+{% load crispy_forms_tags %}
+{% block title %}Настройки бюджета{% endblock %}
+{% block content %}
+<div class="form-container">
+    <div class="form-card">
+        <div class="form-header">
+            <h2>Настройки бюджета</h2>
+            <p class="text-muted">Выберите предпочитаемый способ ведения бюджета</p>
+        </div>
+        
+        <form method="post" class="custom-form">
+            {% csrf_token %}
+            {{ form|crispy }}
+            
+            <div class="budget-type-info mt-4">
+                <div class="card mb-3">
+                    <div class="card-body">
+                        <h5 class="card-title">
+                            <i class="fas fa-calendar-alt me-2"></i>
+                            Общий месячный бюджет
+                        </h5>
+                        <p class="card-text">
+                            Подходит, если вы хотите:
+                            <ul>
+                                <li>Установить общий лимит на месяц</li>
+                                <li>Следить за общим балансом доходов и расходов</li>
+                                <li>Иметь более гибкое распределение средств</li>
+                            </ul>
+                        </p>
+                    </div>
+                </div>
+                
+                <div class="card">
+                    <div class="card-body">
+                        <h5 class="card-title">
+                            <i class="fas fa-tags me-2"></i>
+                            Бюджет по категориям
+                        </h5>
+                        <p class="card-text">
+                            Подходит, если вы хотите:
+                            <ul>
+                                <li>Контролировать расходы по каждой категории</li>
+                                <li>Иметь четкое распределение средств</li>
+                                <li>Детально планировать расходы</li>
+                            </ul>
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="form-actions mt-4">
+                <button class="btn btn-primary submit-btn" type="submit">
+                    <i class="fas fa-save me-2"></i>Сохранить
+                </button>
+                <a class="btn btn-secondary back-btn" href="{% url 'dashboard' %}">
+                    <i class="fas fa-arrow-left me-2"></i>Назад
+                </a>
+            </div>
+        </form>
+    </div>
+</div>
+
+<style>
+/* Используем существующие стили форм */
+.budget-type-info .card {
+    transition: transform 0.2s ease;
+    cursor: pointer;
+}
+
+.budget-type-info .card:hover {
+    transform: translateY(-5px);
+}
+
+.budget-type-info .card-title {
+    color: #2c3e50;
+    font-size: 1.2rem;
+}
+
+.budget-type-info ul {
+    padding-left: 1.2rem;
+    margin-top: 0.5rem;
+}
+
+.budget-type-info li {
+    margin-bottom: 0.3rem;
+    color: #4a5568;
+}
+</style>
+{% endblock %}

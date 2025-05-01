@@ -1,0 +1,16 @@
+version: '3.7'
+
+services:
+  postgres:
+    image: postgres:15
+    environment:
+      POSTGRES_USER: budget
+      POSTGRES_PASSWORD: my_budget
+      POSTGRES_DB: budget
+    volumes:
+      - db-data:/var/lib/postgresql
+    ports:
+      - "5433:5432"
+
+volumes:
+  db-data: null

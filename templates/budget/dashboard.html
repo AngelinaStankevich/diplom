@@ -1,0 +1,503 @@
+{% extends 'base.html' %}
+{% load budget_extras %}
+{% block title %}Личный кабинет{% endblock %}
+{% block content %}
+<div class="dashboard-container">
+    <div class="section-header d-flex justify-content-between align-items-center">
+        <div>
+            <h1>Управление финансами</h1>
+            <p class="text-muted">Обзор ваших категорий и бюджетов</p>
+        </div>
+        <div class="d-flex gap-3">
+            <a class="btn btn-outline-primary" href="{% url 'budget_settings' %}">
+                <i class="fas fa-cog me-2"></i>Настройки бюджета
+            </a>
+            {% if budget_type == 'monthly' %}
+                <a class="btn btn-primary" href="{% url 'add_monthly_budget' %}">
+                    <i class="fas fa-calendar-plus me-2"></i>Добавить бюджет на месяц
+                </a>
+            {% endif %}
+            <a class="btn btn-primary" href="{% url 'add_category' %}">
+                <i class="fas fa-plus-circle me-2"></i>Добавить категорию
+            </a>
+        </div>
+    </div>
+
+    <!-- Секция категорий -->
+    <div class="categories-section mb-5">
+        <div class="row g-4">
+            <div class="col-md-6">
+                <div class="card shadow-sm">
+                    <div class="card-body">
+                        <h3 class="card-title mb-4">Категории расходов</h3>
+                        <div class="categories-grid">
+                            {% for category in expense_categories %}
+                                <div class="category-item">
+                                    <a href="{% url 'add_transaction' %}?category={{ category.id }}"
+                                       class="category-circle"
+                                       style="background-color: {{ category.color|default:'#6c757d' }};"
+                                       title="{{ category.name }}">
+                                        {{ category.name|slice:":2" }}
+                                    </a>
+                                    <span class="category-label">{{ category.name }}</span>
+                                </div>
+                            {% empty %}
+                                <p class="text-muted">Нет категорий расходов</p>
+                            {% endfor %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-6">
+                <div class="card shadow-sm">
+                    <div class="card-body">
+                        <h3 class="card-title mb-4">Категории доходов</h3>
+                        <div class="categories-grid">
+                            {% for category in income_categories %}
+                                <div class="category-item">
+                                    <a href="{% url 'add_transaction' %}?category={{ category.id }}"
+                                       class="category-circle"
+                                       style="background-color: {{ category.color|default:'#6c757d' }};"
+                                       title="{{ category.name }}">
+                                        {{ category.name|slice:":2" }}
+                                    </a>
+                                    <span class="category-label">{{ category.name }}</span>
+                                </div>
+                            {% empty %}
+                                <p class="text-muted">Нет категорий доходов</p>
+                            {% endfor %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Секция бюджета -->
+    {% if budget_type == 'monthly' %}
+        {% if monthly_summary %}
+            <div class="monthly-budget-section">
+                <div class="card">
+                    <div class="card-body">
+                        <div class="d-flex justify-content-between align-items-center mb-4">
+                            <h3 class="card-title mb-0">Бюджет на {{ monthly_summary.currency.symbol }} {{ today|date:"F Y" }}</h3>
+                            <a href="{% url 'edit_monthly_budget' monthly_summary.id %}" class="btn btn-outline-primary">
+                                <i class="fas fa-edit me-2"></i>Редактировать бюджет
+                            </a>
+                        </div>
+
+                        <div class="row g-4">
+                            <div class="col-md-6">
+                                <div class="budget-overview-card income">
+                                    <h4>Доходы</h4>
+                                    <div class="amounts">
+                                        <div class="planned">
+                                            План: <strong>{{ monthly_summary.income_plan }} {{ monthly_summary.currency.symbol }}</strong>
+                                            <small>({{ monthly_summary.income_plan_byn|floatformat:2 }} Br)</small>
+                                        </div>
+                                        <div class="actual">
+                                            Факт: <strong>{{ monthly_summary.actual_income|floatformat:2 }} Br</strong>
+                                        </div>
+                                    </div>
+                                    <div class="progress mt-3" style="height: 10px;">
+                                        <div class="progress-bar bg-success"
+                                             role="progressbar"
+                                             style="width: {{ monthly_summary.income_progress|floatformat:0 }}%"
+                                             aria-valuenow="{{ monthly_summary.income_progress|floatformat:0 }}"
+                                             aria-valuemin="0"
+                                             aria-valuemax="100">
+                                        </div>
+                                    </div>
+                                    <div class="progress-label">
+                                        {{ monthly_summary.income_progress|floatformat:0 }}% от плана
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="col-md-6">
+                                <div class="budget-overview-card expense">
+                                    <h4>Расходы</h4>
+                                    <div class="amounts">
+                                        <div class="planned">
+                                            План: <strong>{{ monthly_summary.expense_plan }} {{ monthly_summary.currency.symbol }}</strong>
+                                            <small>({{ monthly_summary.expense_plan_byn|floatformat:2 }} Br)</small>
+                                        </div>
+                                        <div class="actual">
+                                            Факт: <strong>{{ monthly_summary.actual_expenses|floatformat:2 }} Br</strong>
+                                        </div>
+                                    </div>
+                                    <div class="progress mt-3" style="height: 10px;">
+                                        <div class="progress-bar {% if monthly_summary.expense_progress > 100 %}bg-danger{% else %}bg-success{% endif %}"
+                                             role="progressbar"
+                                             style="width: {{ monthly_summary.expense_progress|floatformat:0 }}%"
+                                             aria-valuenow="{{ monthly_summary.expense_progress|floatformat:0 }}"
+                                             aria-valuemin="0"
+                                             aria-valuemax="100">
+                                        </div>
+                                    </div>
+                                    <div class="progress-label">
+                                        {{ monthly_summary.expense_progress|floatformat:0 }}% от плана
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        {% if monthly_summary.notes %}
+                        <div class="notes-section mt-4">
+                            <h5>Заметки к бюджету</h5>
+                            <p class="text-muted">{{ monthly_summary.notes }}</p>
+                        </div>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        {% else %}
+            <div class="alert alert-info mb-4">
+                <i class="fas fa-info-circle me-2"></i>
+                У вас еще нет бюджета на текущий месяц.
+                <a href="{% url 'add_monthly_budget' %}" class="alert-link">Создать бюджет</a>
+            </div>
+        {% endif %}
+    {% else %}
+        {% if budget_data %}
+            <div class="budget-section">
+                <div class="section-header">
+                    <h2>Бюджеты текущего месяца</h2>
+                    <p class="text-muted mb-4">Отслеживание расходов по категориям</p>
+                </div>
+
+                <div class="row g-4">
+                    {% for b in budget_data %}
+                    <div class="col-md-4">
+                        <div class="card budget-card {% if b.exceeded %}border-danger{% else %}border-success{% endif %} h-100">
+                            <div class="card-body">
+                                <h5 class="card-title d-flex align-items-center gap-2">
+                                    <span class="category-indicator" style="background-color: {{ b.category.color|default:'#6c757d' }}"></span>
+                                    {{ b.category.name }}
+                                </h5>
+                                <div class="budget-info">
+                                    <div class="budget-item">
+                                        <span class="label">Лимит:</span>
+                                        <span class="value">{{ b.limit }} {{ b.currency.symbol }}</span>
+                                        <span class="sub-value">({{ b.limit_byn|floatformat:2 }} Br)</span>
+                                    </div>
+                                    <div class="budget-item">
+                                        <span class="label">Потрачено:</span>
+                                        <span class="value">{{ b.spent|floatformat:2 }} Br</span>
+                                    </div>
+                                    <div class="budget-item">
+                                        <span class="label">{% if b.exceeded %}Превышение:{% else %}Осталось:{% endif %}</span>
+                                        <span class="value {% if b.exceeded %}text-danger{% else %}text-success{% endif %}">
+                                            {% if b.exceeded %}
+                                                {{ b.spent|floatformat:2|add:"-"|add:b.limit_byn|floatformat:2 }} Br
+                                            {% else %}
+                                                {{ b.left|floatformat:2 }} Br
+                                            {% endif %}
+                                        </span>
+                                    </div>
+                                </div>
+                                <div class="progress mt-3" style="height: 10px;">
+                                    <div class="progress-bar {% if b.exceeded %}bg-danger{% else %}bg-success{% endif %}"
+                                         role="progressbar"
+                                         style="width: {{ b.spent|div:b.limit_byn|mul:100|floatformat:0 }}%;"
+                                         aria-valuenow="{{ b.spent|div:b.limit_byn|mul:100|floatformat:0 }}"
+                                         aria-valuemin="0" aria-valuemax="100">
+                                    </div>
+                                </div>
+                                <div class="text-end mt-2">
+                                    <small class="text-muted">
+                                        {{ b.spent|div:b.limit_byn|mul:100|floatformat:0 }}% использовано
+                                    </small>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    {% empty %}
+                    <div class="col-12">
+                        <div class="alert alert-info">Нет установленных бюджетов на этот месяц.</div>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+        {% else %}
+            <div class="alert alert-info mb-4">
+                <i class="fas fa-info-circle me-2"></i>
+                У вас еще нет бюджетов по категориям на текущий месяц.
+                <a href="{% url 'add_budget' %}" class="alert-link">Добавить бюджет категории</a>
+            </div>
+        {% endif %}
+    {% endif %}
+</div>
+
+<style>
+.dashboard-container {
+    padding: 2rem 2rem;
+    position: relative;
+    min-height: 100vh;
+    background: linear-gradient(135deg, #f0f2f5 0%, #e2e6ea 100%);
+    margin: 0 -1rem;
+    width: calc(100% + 2rem);
+    border-radius: 24px;
+    overflow: hidden;
+}
+
+.dashboard-container::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background:
+        radial-gradient(circle at 80% 20%, rgba(255,255,255,0.5) 0%, transparent 50%),
+        radial-gradient(circle at 20% 80%, rgba(255,255,255,0.5) 0%, transparent 50%);
+    pointer-events: none;
+    z-index: 0;
+    border-radius: 24px;
+}
+
+.card {
+    border-radius: 16px;
+    border: none;
+    background: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(10px);
+    box-shadow: 0 8px 16px rgba(0,0,0,0.08);
+    height: 100%;
+    margin-bottom: 0;
+}
+
+.card:hover {
+    box-shadow: 0 12px 20px rgba(0,0,0,0.15);
+}
+
+.section-header {
+    margin-bottom: 2rem;
+    position: relative;
+    z-index: 1;
+    padding: 0.5rem 0;
+}
+
+.section-header h1, .section-header h2 {
+    margin-bottom: 0.25rem;
+    color: #2c3e50;
+    text-shadow: 1px 1px 2px rgba(255,255,255,0.8);
+}
+
+.section-header p {
+    margin-bottom: 0;
+}
+
+.categories-section {
+    position: relative;
+    z-index: 2;
+    margin-top: 2rem;
+    margin-bottom: 3rem;
+}
+
+.categories-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+    gap: 1.5rem;
+    padding: 1rem 0;
+}
+
+.category-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.75rem;
+    margin-bottom: 0.5rem;
+}
+
+.category-circle {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 70px;
+    height: 70px;
+    border-radius: 50%;
+    color: #fff;
+    font-size: 1.2em;
+    font-weight: bold;
+    text-decoration: none;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+}
+
+.category-circle:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 6px 12px rgba(0,0,0,0.2);
+    color: #fff;
+}
+
+.category-label {
+    font-size: 0.9em;
+    text-align: center;
+    color: #4a5568;
+    max-width: 100px;
+    word-wrap: break-word;
+}
+
+.budget-section {
+    margin-top: 4rem;
+    padding-top: 2rem;
+    border-top: 1px solid rgba(0,0,0,0.05);
+    position: relative;
+    z-index: 1;
+}
+
+.budget-section .section-header {
+    margin-bottom: 2.5rem;
+}
+
+.budget-card {
+    transition: transform 0.2s ease;
+    margin-bottom: 1.5rem;
+    background: rgba(255, 255, 255, 0.95);
+    border: none !important;
+    position: relative;
+}
+
+.budget-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 4px;
+    border-radius: 4px 4px 0 0;
+}
+
+.budget-card.border-success::before {
+    background: linear-gradient(to right, #28a745, #34ce57);
+}
+
+.budget-card.border-danger::before {
+    background: linear-gradient(to right, #dc3545, #e4606d);
+}
+
+.budget-card .card-body {
+    padding: 1.5rem;
+}
+
+.category-indicator {
+    display: inline-block;
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+}
+
+.budget-info {
+    margin: 1.5rem 0;
+}
+
+.budget-item {
+    display: flex;
+    flex-direction: column;
+    margin-bottom: 0.8rem;
+}
+
+.budget-item .label {
+    font-size: 0.9em;
+    color: #718096;
+}
+
+.budget-item .value {
+    font-size: 1.1em;
+    font-weight: 600;
+}
+
+.budget-item .sub-value {
+    font-size: 0.85em;
+    color: #718096;
+}
+
+.progress {
+    background-color: rgba(226, 232, 240, 0.5);
+    border-radius: 12px;
+    overflow: hidden;
+}
+
+.progress-bar {
+    transition: width 0.6s ease;
+    animation: progressAnimation 1s ease-out;
+}
+
+.section-header .btn {
+    padding: 0.6rem 1.2rem;
+    border-radius: 12px;
+    font-weight: 500;
+    transition: all 0.3s ease;
+    background: linear-gradient(135deg, #4a90e2 0%, #357abd 100%);
+    border: none;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+    font-size: 0.9rem;
+}
+
+.section-header .btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 12px rgba(0,0,0,0.15);
+    background: linear-gradient(135deg, #357abd 0%, #2868a9 100%);
+}
+
+.monthly-budget-section .card {
+    border: none;
+    background: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(10px);
+}
+
+.budget-overview-card {
+    padding: 1.5rem;
+    border-radius: 12px;
+    background: rgba(255, 255, 255, 0.8);
+    box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+}
+
+.budget-overview-card h4 {
+    color: #2d3748;
+    margin-bottom: 1rem;
+    font-size: 1.2rem;
+}
+
+.amounts {
+    margin-bottom: 1rem;
+}
+
+.planned {
+    color: #718096;
+    margin-bottom: 0.5rem;
+}
+
+.actual {
+    font-size: 1.1rem;
+}
+
+.progress-label {
+    font-size: 0.9rem;
+    color: #718096;
+    margin-top: 0.5rem;
+    text-align: right;
+}
+
+.notes-section {
+    padding: 1rem;
+    background: rgba(255, 255, 255, 0.8);
+    border-radius: 12px;
+}
+
+.notes-section h5 {
+    color: #2d3748;
+    margin-bottom: 0.5rem;
+}
+
+@keyframes progressAnimation {
+    from { width: 0; }
+}
+
+.dashboard-container > div:not(:last-child) {
+    position: relative;
+    margin-bottom: 3rem;
+}
+</style>
+{% endblock %}

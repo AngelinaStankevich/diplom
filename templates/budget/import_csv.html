@@ -1,0 +1,11 @@
+{% extends 'base.html' %}
+{% block title %}Импорт операций из CSV{% endblock %}
+{% block content %}
+<h1>Импорт операций из CSV</h1>
+<form method="post" enctype="multipart/form-data">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <button class="btn btn-primary" type="submit">Импортировать</button>
+    <a class="btn btn-link" href="{% url 'dashboard' %}">Назад</a>
+</form>
+{% endblock %}

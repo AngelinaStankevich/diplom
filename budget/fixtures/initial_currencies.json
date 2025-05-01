@@ -1,0 +1,42 @@
+[
+    {
+        "model": "budget.currency",
+        "pk": 1,
+        "fields": {
+            "code": "BYN",
+            "name": "Белорусский рубль",
+            "symbol": "Br",
+            "rate": 1.0000
+        }
+    },
+    {
+        "model": "budget.currency",
+        "pk": 2,
+        "fields": {
+            "code": "RUB",
+            "name": "Российский рубль",
+            "symbol": "₽",
+            "rate": 0.0350
+        }
+    },
+    {
+        "model": "budget.currency",
+        "pk": 3,
+        "fields": {
+            "code": "USD",
+            "name": "Доллар США",
+            "symbol": "$",
+            "rate": 3.2000
+        }
+    },
+    {
+        "model": "budget.currency",
+        "pk": 4,
+        "fields": {
+            "code": "EUR",
+            "name": "Евро",
+            "symbol": "€",
+            "rate": 3.4500
+        }
+    }
+]
