@@ -9,12 +9,16 @@
             <p class="text-muted">Обзор ваших категорий и бюджетов</p>
         </div>
         <div class="d-flex gap-3">
-            <a class="btn btn-outline-primary" href="{% url 'budget_settings' %}">
+            <a class="btn btn-primary" href="{% url 'budget_settings' %}">
                 <i class="fas fa-cog me-2"></i>Настройки бюджета
             </a>
             {% if budget_type == 'monthly' %}
                 <a class="btn btn-primary" href="{% url 'add_monthly_budget' %}">
                     <i class="fas fa-calendar-plus me-2"></i>Добавить бюджет на месяц
+                </a>
+            {% elif budget_type == 'category' %}
+                <a class="btn btn-primary" href="{% url 'add_budget' %}">
+                    <i class="fas fa-wallet me-2"></i>Добавить бюджет на категорию
                 </a>
             {% endif %}
             <a class="btn btn-primary" href="{% url 'add_category' %}">
@@ -94,10 +98,10 @@
                                     <div class="amounts">
                                         <div class="planned">
                                             План: <strong>{{ monthly_summary.income_plan }} {{ monthly_summary.currency.symbol }}</strong>
-                                            <small>({{ monthly_summary.income_plan_byn|floatformat:2 }} Br)</small>
+                                            <small>({{ monthly_summary.income_plan_byn|floatformat:2 }} BYN)</small>
                                         </div>
                                         <div class="actual">
-                                            Факт: <strong>{{ monthly_summary.actual_income|floatformat:2 }} Br</strong>
+                                            Факт: <strong>{{ monthly_summary.actual_income|floatformat:2 }} BYN</strong>
                                         </div>
                                     </div>
                                     <div class="progress mt-3" style="height: 10px;">
@@ -121,10 +125,10 @@
                                     <div class="amounts">
                                         <div class="planned">
                                             План: <strong>{{ monthly_summary.expense_plan }} {{ monthly_summary.currency.symbol }}</strong>
-                                            <small>({{ monthly_summary.expense_plan_byn|floatformat:2 }} Br)</small>
+                                            <small>({{ monthly_summary.expense_plan_byn|floatformat:2 }} BYN)</small>
                                         </div>
                                         <div class="actual">
-                                            Факт: <strong>{{ monthly_summary.actual_expenses|floatformat:2 }} Br</strong>
+                                            Факт: <strong>{{ monthly_summary.actual_expenses|floatformat:2 }} BYN</strong>
                                         </div>
                                     </div>
                                     <div class="progress mt-3" style="height: 10px;">
@@ -179,20 +183,19 @@
                                 <div class="budget-info">
                                     <div class="budget-item">
                                         <span class="label">Лимит:</span>
-                                        <span class="value">{{ b.limit }} {{ b.currency.symbol }}</span>
-                                        <span class="sub-value">({{ b.limit_byn|floatformat:2 }} Br)</span>
+                                        <span class="value">{{ b.limit }} BYN</span>
                                     </div>
                                     <div class="budget-item">
                                         <span class="label">Потрачено:</span>
-                                        <span class="value">{{ b.spent|floatformat:2 }} Br</span>
+                                        <span class="value">{{ b.spent|floatformat:2 }} BYN</span>
                                     </div>
                                     <div class="budget-item">
                                         <span class="label">{% if b.exceeded %}Превышение:{% else %}Осталось:{% endif %}</span>
                                         <span class="value {% if b.exceeded %}text-danger{% else %}text-success{% endif %}">
                                             {% if b.exceeded %}
-                                                {{ b.spent|floatformat:2|add:"-"|add:b.limit_byn|floatformat:2 }} Br
+                                                {{ b.spent|minus:b.limit_byn|floatformat:2 }} BYN
                                             {% else %}
-                                                {{ b.left|floatformat:2 }} Br
+                                                {{ b.left|floatformat:2 }} BYN
                                             {% endif %}
                                         </span>
                                     </div>

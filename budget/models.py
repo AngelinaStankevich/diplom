@@ -66,7 +66,7 @@ class Currency(models.Model):
         verbose_name_plural = "currencies"
 
     def __str__(self):
-        return f"{self.code} ({self.symbol})"
+        return self.code
 
 class MonthlyBudget(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)

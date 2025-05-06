@@ -28,3 +28,10 @@ def mul(value, arg):
 @register.filter
 def zip_lists(a, b):
     return zip(a, b)
+
+@register.filter
+def minus(value, arg):
+    try:
+        return float(value) - float(arg)
+    except:
+        return ''

@@ -5,7 +5,7 @@
         "fields": {
             "code": "BYN",
             "name": "Белорусский рубль",
-            "symbol": "Br",
+            "symbol": "р",
             "rate": 1.0000
         }
     },

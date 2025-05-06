@@ -1,5 +1,6 @@
 from django.urls import path, include
 from . import views
+from .views import TransactionCreateView
 
 urlpatterns = [
     path('', views.dashboard, name='dashboard'),
@@ -19,4 +20,5 @@ urlpatterns = [
     path('add_monthly_budget/', views.add_monthly_budget, name='add_monthly_budget'),
     path('budget_settings/', views.budget_settings, name='budget_settings'),
     path('edit_monthly_budget/<int:pk>/', views.edit_monthly_budget, name='edit_monthly_budget'),
+    path('transactions/create/', TransactionCreateView.as_view(), name='transaction_create'),
 ]

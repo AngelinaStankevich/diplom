@@ -1,0 +1,14 @@
+# Принудительно используем LF для всех текстовых файлов
+* text=auto
+
+# Для Python-файлов всегда LF
+*.py text eol=lf
+
+# Для shell-скриптов (если появятся)
+*.sh text eol=lf
+
+# Для Dockerfile и конфигов
+Dockerfile text eol=lf
+*.yml text eol=lf
+*.yaml text eol=lf
+*.env text eol=lf

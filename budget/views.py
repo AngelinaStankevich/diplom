@@ -11,6 +11,7 @@ from django.http import HttpResponse
 from io import TextIOWrapper
 from django.contrib import messages
 from django.db.models.functions import TruncMonth
+from django.views.generic.edit import CreateView
 
 @login_required
 def dashboard(request):
@@ -534,3 +535,9 @@ def edit_monthly_budget(request, pk):
         'form': form,
         'budget': budget
     })
+
+class TransactionCreateView(CreateView):
+    model = Transaction
+    fields = ['category', 'amount', 'currency', 'date', 'description']
+    template_name = 'budget/transaction_form.html'
+    success_url = '/'  # или другой URL, куда перенаправлять после создания
