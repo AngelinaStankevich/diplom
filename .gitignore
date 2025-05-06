@@ -41,3 +41,14 @@ ENV/
 # OS
 .DS_Store
 Thumbs.db
+
+# Django static files
+staticfiles/
+
+# Coverage reports
+.coverage
+htmlcov/
+
+# Pytest cache (на всякий случай)
+.pytest_cache/
+**/__pycache__/

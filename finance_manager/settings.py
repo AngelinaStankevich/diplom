@@ -25,7 +25,7 @@ SECRET_KEY = 'django-insecure-+14!6^gsa*zj=#21mm&y8h31vk(5^@a$1r+7d1x$f6*8p4+&r4
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = os.environ.get('ALLOWED_HOSTS', '127.0.0.1,localhost').split(',')
 
 
 # Application definition
@@ -84,11 +84,11 @@ WSGI_APPLICATION = 'finance_manager.wsgi.application'
 DATABASES = {
     "default": {
         "ENGINE": "django.db.backends.postgresql_psycopg2",
-        "NAME": "budget",
-        "USER":  "budget",
-        "PASSWORD": "my_budget",
-        "HOST": "localhost",
-        "PORT": "5433",
+        "NAME": os.environ.get("POSTGRES_DB", "budget"),
+        "USER": os.environ.get("POSTGRES_USER", "budget"),
+        "PASSWORD": os.environ.get("POSTGRES_PASSWORD", "my_budget"),
+        "HOST": os.environ.get("POSTGRES_HOST", "postgres"),
+        "PORT": os.environ.get("POSTGRES_PORT", "5432"),
     }
 }
 
@@ -129,6 +129,7 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/4.2/howto/static-files/
 
 STATIC_URL = 'static/'
+STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/4.2/ref/settings/#default-auto-field
